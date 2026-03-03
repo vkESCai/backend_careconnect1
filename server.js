@@ -26,4 +26,12 @@ app.get("/", (req, res) => {
   res.send("API Working")
 });
 
+app.use(cors({
+  origin: [
+    "https://frontend-doc-ten.vercel.app",
+    "https://admin-care-connect-sigma.vercel.app"
+  ],
+  credentials: true
+}));
+
 app.listen(port, () => console.log(`Server started on PORT:${port}`))
