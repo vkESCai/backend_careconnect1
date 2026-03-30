@@ -1,18 +1,18 @@
 {
-  "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "/api/$1"
-    }
-  ],
-  "headers": [
-    {
-      "source": "/api/(.*)",
-      "headers": [
-        { "key": "Access-Control-Allow-Origin", "value": "*" },
-        { "key": "Access-Control-Allow-Methods", "value": "GET, POST, PUT, DELETE, OPTIONS" },
-        { "key": "Access-Control-Allow-Headers", "value": "Content-Type, Authorization" }
-      ]
-    }
-  ]
-}
+ "version": 2,
+ "builds": [
+ {
+ "src": "server.js",
+ "use": "@vercel/node"
+ }
+ ],
+ "routes": [
+ {
+ "src": "/api/(.*)",
+ "dest": "server.js"
+ }
+ ],
+ "env": {
+ "DATABASE_URL": "mongodb+srv://vikash620335:qwerty6203@cluster0.mhdwcfr.mongodb.net",
+ "API_KEY": "@api_key"
+ }
