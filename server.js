@@ -9,7 +9,7 @@ import adminRouter from "./routes/adminRoute.js";
 
 const app = express();
 
-// ✅ CORS (must be first)
+// middleware
 app.use(cors({
   origin: [
     "http://localhost:5173",
@@ -20,36 +20,44 @@ app.use(cors({
   credentials: true,
 }));
 
-// ✅ Middleware
 app.use(express.json());
 
-// ✅ Safe connection (important for Vercel)
+// ✅ SAFE connection (NO CRASH)
 let isConnected = false;
 
 app.use(async (req, res, next) => {
   try {
     if (!isConnected) {
-      await connectDB();
-      connectCloudinary();
+      console.log("Connecting services...");
+
+      await connectDB().catch(err => {
+        console.error("❌ DB FAILED:", err.message);
+      });
+
+      try {
+        connectCloudinary();
+      } catch (err) {
+        console.error("❌ Cloudinary FAILED:", err.message);
+      }
+
       isConnected = true;
-      console.log("✅ DB & Cloudinary Connected");
     }
+
     next();
   } catch (error) {
-    console.error("❌ Connection Error:", error);
-    return res.status(500).json({ error: "Server crashed" });
+    console.error("❌ Middleware crash:", error.message);
+    next(); // don't block request
   }
 });
 
-// ✅ Routes
+// routes
 app.use("/api/user", userRouter);
 app.use("/api/admin", adminRouter);
 app.use("/api/doctor", doctorRouter);
 
-// ✅ Test route
+// test route
 app.get("/", (req, res) => {
   res.send("API Working 🚀");
 });
 
-// ✅ EXPORT for Vercel (DO NOT use app.listen)
 export default app;
